@@ -1,0 +1,16 @@
+{
+  "name": "cgs-vendor-pdf-extractor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local vendor PDF text and bill-field extraction service",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "pdf-parse": "1.1.1"
+  }
+}

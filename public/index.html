@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b48">
+  <title>New Bill | CGS Global Enterprises</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/form.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="CGS Global Enterprises home">
+        <span class="brand-mark" aria-hidden="true">CGS</span>
+        <span class="brand-copy"><strong>CGS GLOBAL ENTERPRISES</strong><small>Reliable billing, clearly recorded.</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="nav-link is-active" href="/" aria-current="page">New Bill</a>
+        <a class="nav-link" href="/history.html">History</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <div class="page-heading">
+      <div><p class="eyebrow">BILLING</p><h1>Create a new bill</h1><p class="page-subtitle">Enter the invoice details and line items below.</p></div>
+      <span class="heading-note"><span class="required-star">*</span> Required fields</span>
+    </div>
+
+    <form id="bill-form" novalidate>
+      <section class="panel vendor-import-panel" aria-labelledby="vendor-import-heading">
+        <div class="panel-heading"><div><p class="section-index">PDF</p><h2 id="vendor-import-heading">Import vendor invoice</h2></div></div>
+        <div class="vendor-import-controls">
+          <div class="field-group vendor-file-field">
+            <label for="vendor-pdf">Vendor invoice PDF</label>
+            <input id="vendor-pdf" name="vendorPdf" type="file" accept="application/pdf,.pdf" aria-describedby="vendor-pdf-hint">
+            <small class="field-hint" id="vendor-pdf-hint">No sign-in required. Extracted text and bill fields are saved as JSON drafts for review.</small>
+          </div>
+          <button class="button button-secondary" id="extract-vendor-pdf" type="button"><span class="button-label">Extract bill details</span><span class="button-spinner" aria-hidden="true"></span></button>
+        </div>
+        <p class="extract-status" id="extract-status" role="status" aria-live="polite"></p>
+        <details class="extract-content" id="extract-content" hidden>
+          <summary>View extracted PDF text copied to JSON</summary>
+          <pre id="extract-content-text"></pre>
+        </details>
+      </section>
+
+      <section class="panel" aria-labelledby="parties-heading">
+        <div class="panel-heading"><div><p class="section-index">01</p><h2 id="parties-heading">Parties & invoice</h2></div></div>
+        <div class="party-copy-control">
+          <label class="same-party-option" for="same-as-seller"><input id="same-as-seller" type="checkbox" checked><span>Consignee same as seller</span></label>
+          <small class="field-hint">Uncheck to enter different consignee details.</small>
+        </div>
+        <div class="party-grid">
+          <fieldset class="party-block">
+            <legend>Seller</legend>
+            <div class="field-group">
+              <label for="seller-name">Name <span class="required-star">*</span></label>
+              <input id="seller-name" name="sellerName" type="text" autocomplete="organization" required>
+              <small class="field-error" id="seller-name-error"></small>
+            </div>
+            <div class="field-group">
+              <label for="seller-address">Address <span class="required-star">*</span></label>
+              <textarea id="seller-address" name="sellerAddress" rows="3" autocomplete="street-address" required></textarea>
+              <small class="field-error" id="seller-address-error"></small>
+            </div>
+          </fieldset>
+          <fieldset class="party-block">
+            <legend>Consignee <span class="muted-legend">(Ship to)</span></legend>
+            <div class="field-group">
+              <label for="ship-to-name">Name <span class="required-star">*</span></label>
+              <input id="ship-to-name" name="shipToName" type="text" autocomplete="organization" required>
+              <small class="field-error" id="ship-to-name-error"></small>
+            </div>
+            <div class="field-group">
+              <label for="ship-to-address">Address <span class="required-star">*</span></label>
+              <textarea id="ship-to-address" name="shipToAddress" rows="3" autocomplete="street-address" required></textarea>
+              <small class="field-error" id="ship-to-address-error"></small>
+            </div>
+          </fieldset>
+        </div>
+        <div class="invoice-grid">
+          <div class="field-group">
+            <label for="invoice-date">Invoice date <span class="required-star">*</span></label>
+            <input id="invoice-date" name="invoiceDate" type="date" required>
+            <small class="field-error" id="invoice-date-error"></small>
+          </div>
+          <div class="field-group">
+            <label for="due-days">Due days</label>
+            <input id="due-days" name="dueDays" type="number" min="1" step="1" value="10" required aria-describedby="due-days-hint due-days-error">
+            <small class="field-hint" id="due-days-hint">Payment is due this many days after the invoice date.</small>
+            <small class="field-error" id="due-days-error"></small>
+          </div>
+          <div class="field-group">
+            <label for="vehicle-no">Vehicle no. <span class="required-star">*</span></label>
+            <input id="vehicle-no" name="vehicleNo" type="text" placeholder="KA02AF7135" autocomplete="off" required aria-describedby="vehicle-hint vehicle-warning vehicle-no-error">
+            <small class="field-hint" id="vehicle-hint">Spaces are removed automatically.</small>
+            <small class="field-warning" id="vehicle-warning" aria-live="polite"></small>
+            <small class="field-error" id="vehicle-no-error"></small>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel items-panel" aria-labelledby="items-heading">
+        <div class="panel-heading panel-heading-row"><div><p class="section-index">02</p><h2 id="items-heading">Line items</h2></div><button class="button button-secondary" id="add-item" type="button"><span aria-hidden="true">+</span> Add item</button></div>
+        <div class="table-scroll" tabindex="0" aria-label="Line items table; scroll horizontally on small screens">
+          <table class="items-table">
+            <thead><tr><th scope="col">Sl No</th><th scope="col">Description of goods <span class="required-star">*</span></th><th scope="col">HSN</th><th scope="col">Quantity <span class="required-star">*</span></th><th scope="col">Unit <span class="required-star">*</span></th><th scope="col">Rate (excl. tax)</th><th scope="col">Rate (incl. tax)</th><th scope="col">Amount before increase</th><th scope="col">Discount</th><th scope="col"><span class="sr-only">Remove item</span></th></tr></thead>
+            <tbody id="items-body"></tbody>
+          </table>
+        </div>
+        <p class="table-note">Line amounts are calculated from quantity × rate (excl. GST). GST is added to the final total; scheme/free item amounts are deducted before tax.</p>
+      </section>
+
+      <section class="panel totals-panel" aria-labelledby="payment-heading">
+        <div class="totals-layout">
+          <div class="field-group payment-field">
+            <label for="payment-status">Payment status</label>
+            <select id="payment-status" name="paymentStatus"><option value="Unpaid" selected>Unpaid</option><option value="Paid">Paid</option></select>
+            <small class="field-hint">Status is recorded manually for the ship-to customer.</small>
+          </div>
+          <div class="field-group increase-field">
+            <label for="percentage-increase">Percentage of increase</label>
+            <div class="percentage-entry"><input id="percentage-increase" name="percentageIncrease" type="number" min="0" step="0.01" value="0" inputmode="decimal" aria-describedby="increase-hint percentage-increase-error"><span aria-hidden="true">%</span></div>
+            <small class="field-hint" id="increase-hint">Applied to every rate and line-item amount before discounts.</small>
+            <small class="field-error" id="percentage-increase-error"></small>
+          </div>
+          <div class="total-box">
+            <label for="total-amount">Total amount (incl. GST)</label>
+            <div class="total-entry"><span class="currency-prefix" aria-hidden="true">₹</span><input id="total-amount" name="totalAmount" type="number" min="0" step="0.01" value="0.00" inputmode="decimal" readonly aria-describedby="total-formatted tax-formatted discount-formatted amount-words"></div>
+            <p class="total-formatted" id="total-formatted" aria-live="polite">₹0.00</p>
+            <p class="tax-formatted" id="tax-formatted" hidden></p>
+            <p class="tax-formatted" id="round-off-formatted" hidden></p>
+            <p class="discount-formatted" id="discount-formatted" hidden></p>
+            <p class="amount-words" id="amount-words">Indian Rupees Zero Only</p>
+            <small class="field-error" id="total-amount-error"></small>
+          </div>
+        </div>
+      </section>
+
+      <div class="form-actions"><button class="button button-quiet" id="clear-form" type="button">Clear form</button><button class="button button-primary" id="submit-bill" type="submit"><span class="button-label">Submit bill</span><span class="button-spinner" aria-hidden="true"></span></button></div>
+    </form>
+  </main>
+  <div class="toast-region" id="toast-region" role="status" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+node_modules/
+.chatgpt-profile/
+data/extracted-drafts.json
+data/extracted-content.json

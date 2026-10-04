@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b48">
+  <title>Invoice | CGS Global Enterprises</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/bill.js" defer></script>
+</head>
+<body class="bill-page">
+  <main class="bill-workspace">
+    <div class="bill-toolbar">
+      <a class="button button-secondary" href="/history.html">Back to history</a>
+      <button class="button button-primary" id="download-pdf" type="button" disabled>Download PDF</button>
+    </div>
+    <p class="bill-loading" id="bill-loading" role="status">Loading invoice…</p>
+    <p class="bill-error" id="bill-error" role="alert" hidden></p>
+    <article class="invoice-paper" id="invoice-paper" aria-label="Invoice" hidden>
+      <div class="invoice-kicker"><strong>TAX INVOICE</strong><span>ORIGINAL FOR RECIPIENT</span></div>
+      <header class="invoice-header">
+        <section class="invoice-seller">
+          <h1>CGS GLOBAL ENTERPRISES</h1>
+          <p>1st Cross, Site No 33, Chandapura Anekal road, Iggalur Village,
+HM Layout, Bengaluru, Bengaluru Urb, Bangalore, Karnataka, 560099
+GSTIN: 29CNDPN4917R1Z5  Mobile: 6360649010
+PAN Number: CNDPN4917R
+Email: cgsglobalenterprises@gmail.com</p>
+        </section>
+        <section class="invoice-meta" aria-label="Invoice information">
+          <div class="invoice-meta-pair"><strong>Invoice No.</strong><span id="invoice-number"></span></div>
+          <div class="invoice-meta-pair"><strong>Invoice Date</strong><span id="invoice-date"></span></div>
+          <div class="invoice-meta-pair vehicle-meta"><strong>Vehicle No.</strong><span id="vehicle-number"></span></div>
+        </section>
+      </header>
+      <section class="invoice-parties" aria-label="Bill and shipping addresses">
+        <div class="invoice-party"><h2>BILL TO</h2><strong id="bill-to-name"></strong><p id="bill-to-address"></p></div>
+        <div class="invoice-party"><h2>SHIP TO</h2><strong id="ship-to-name"></strong><p id="ship-to-address"></p></div>
+      </section>
+      <section class="invoice-items-wrap" aria-label="Invoice line items">
+        <table class="invoice-items">
+          <thead><tr><th scope="col">S.NO.</th><th scope="col">ITEMS</th><th scope="col">HSN</th><th scope="col">QTY.</th><th scope="col">RATE (EXCL. GST)</th><th scope="col">RATE (INCL. GST)</th><th scope="col">AMOUNT (EXCL. GST)</th></tr></thead>
+          <tbody id="invoice-items"></tbody>
+          <tfoot>
+            <tr id="invoice-subtotal-row" hidden><th colspan="6">SUBTOTAL (EXCL. GST)</th><td id="invoice-subtotal"></td></tr>
+            <tr id="invoice-discount-row" hidden><th colspan="6">DISCOUNT (SCHEME/FREE ITEMS)</th><td id="invoice-discount"></td></tr>
+            <tr id="invoice-tax-row" hidden><th colspan="6">TOTAL TAX AMOUNT</th><td id="invoice-tax-amount"></td></tr>
+            <tr id="invoice-round-off-row" hidden><th colspan="6">ROUND OFF</th><td id="invoice-round-off"></td></tr>
+            <tr><th colspan="3">TOTAL (INCL. GST)</th><td id="quantity-total"></td><td colspan="2"></td><th id="invoice-total"></th></tr>
+          </tfoot>
+        </table>
+      </section>
+      <section class="invoice-summary">
+        <div class="invoice-amount-words">
+          <strong>Amount in words</strong>
+          <p id="amount-in-words"></p>
+        </div>
+      </section>
+      <section class="invoice-tax-wrap" aria-label="Tax summary by HSN">
+        <table class="invoice-tax">
+          <colgroup><col><col><col><col><col><col><col></colgroup>
+          <thead>
+            <tr><th scope="col" rowspan="2">HSN/SAC</th><th scope="col" rowspan="2">Taxable Value</th><th scope="colgroup" colspan="2">CGST</th><th scope="colgroup" colspan="2">SGST</th><th scope="col" rowspan="2">Total Tax Amount</th></tr>
+            <tr><th scope="col">Rate</th><th scope="col">Amount</th><th scope="col">Rate</th><th scope="col">Amount</th></tr>
+          </thead>
+          <tbody id="invoice-tax-summary"></tbody>
+          <tfoot><tr><th scope="row">TOTAL</th><td id="taxable-total"></td><td></td><td id="cgst-total"></td><td></td><td id="sgst-total"></td><th id="tax-total"></th></tr></tfoot>
+        </table>
+      </section>
+      <footer class="invoice-footer">
+        <section class="invoice-bank-details" aria-label="Bank details">
+          <strong>Bank Details</strong>
+          <span>Name: CGS GLOBAL ENTERPRISES</span>
+          <span>IFSC Code: BARB0VJSISA</span>
+          <span>Account No: 67520200001650</span>
+          <span>Bank: Bank of Baroda ,SINGASANDRA AECS LAYOUT</span>
+        </section>
+        <div class="invoice-signature"><strong>For CGS GLOBAL ENTERPRISES</strong><span></span><small>Authorized Signatory</small></div>
+      </footer>
+    </article>
+  </main>
+</body>
+</html>

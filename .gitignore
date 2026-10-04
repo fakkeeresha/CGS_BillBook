@@ -1,0 +1,11 @@
+.venv/
+node_modules/
+**/node_modules/
+
+data/*
+!data/.gitkeep
+backend_dataserve/data/
+backend_dataserve/.chatgpt-profile/
+
+Sample/
+*.pdf

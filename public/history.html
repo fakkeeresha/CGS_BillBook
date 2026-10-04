@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b48">
+  <title>Bill History | CGS Global Enterprises</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/history.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="CGS Global Enterprises home">
+        <span class="brand-mark" aria-hidden="true">CGS</span>
+        <span class="brand-copy"><strong>CGS GLOBAL ENTERPRISES</strong><small>Reliable billing, clearly recorded.</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="nav-link" href="/">New Bill</a>
+        <a class="nav-link is-active" href="/history.html" aria-current="page">History</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-shell history-shell">
+    <div class="page-heading history-heading">
+      <div><p class="eyebrow">RECORDS</p><h1>Bill history</h1><p class="page-subtitle">Review invoices and keep payment status up to date.</p></div>
+      <a class="button button-primary new-bill-link" href="/">+ New bill</a>
+    </div>
+
+    <section class="summary-strip" aria-label="Bill summary">
+      <div class="summary-item"><span class="summary-label">Total bills</span><strong id="summary-total">0</strong></div>
+      <div class="summary-item"><span class="summary-label">Paid</span><strong id="summary-paid" class="summary-paid">0</strong></div>
+      <div class="summary-item"><span class="summary-label">Unpaid</span><strong id="summary-unpaid" class="summary-unpaid">0</strong></div>
+      <div class="summary-item summary-wide"><span class="summary-label">Total unpaid amount</span><strong id="summary-unpaid-amount">₹0.00</strong></div>
+    </section>
+
+    <section class="panel history-panel" aria-label="Bills">
+      <div class="history-toolbar">
+        <div class="field-group search-field"><label for="search-bills">Search ship-to name</label><input id="search-bills" type="search" placeholder="Search customers" autocomplete="off"></div>
+        <div class="field-group filter-field"><label for="status-filter">Payment status</label><select id="status-filter"><option value="All">All statuses</option><option value="Paid">Paid</option><option value="Unpaid">Unpaid</option></select></div>
+        <button class="button button-secondary excel-download-button" id="download-excel" type="button">Download Excel</button>
+      </div>
+      <div class="history-table-wrap">
+        <table class="history-table">
+          <thead><tr><th scope="col">Bill number</th><th scope="col">Ship to</th><th scope="col">Address</th><th scope="col">Invoice date</th><th scope="col" class="amount-column">Total amount</th><th scope="col">Payment status</th><th scope="col">Actions</th></tr></thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="empty-state" hidden><span class="empty-mark" aria-hidden="true">—</span><h2 id="empty-title">No bills yet</h2><p id="empty-copy">Bills you create will appear here.</p><a class="button button-secondary" href="/">Create your first bill</a></div>
+      <p class="load-error" id="load-error" role="alert" hidden></p>
+    </section>
+  </main>
+  <div class="toast-region" id="toast-region" role="status" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
