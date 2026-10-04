@@ -201,7 +201,7 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
 .bill-toolbar { width: min(210mm, 100%); display: flex; justify-content: space-between; gap: 12px; margin: 0 auto 16px; }
 .bill-loading, .bill-error { width: min(210mm, 100%); margin: 0 auto 16px; padding: 14px; background: #fff; border-radius: 4px; color: #4e615d; font-size: 13px; }
 .bill-error { color: #8c2d2a; }
-.invoice-paper { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 11mm; background: #fff; box-shadow: 0 8px 28px rgba(24, 44, 42, .13); font-size: 9pt; line-height: 1.35; }
+.invoice-paper { width: min(210mm, 100%); min-height: 297mm; margin: 0 auto; padding: 11mm; background: #fff; box-shadow: 0 8px 28px rgba(24, 44, 42, .13); font-size: 9pt; line-height: 1.35; }
 .invoice-kicker { display: flex; align-items: center; gap: 10px; margin-bottom: 4mm; font-size: 9pt; }
 .invoice-kicker span { padding: 1mm 2.5mm; border: 1px solid #7d7d7d; color: #666; font-size: 8pt; }
 .invoice-header { display: grid; grid-template-columns: 1.55fr 1fr; min-height: 30mm; border: 1px solid #222; }
@@ -220,8 +220,9 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
 .invoice-party h2 { margin: 0 0 1.5mm; font-size: 8pt; }
 .invoice-party > strong { display: block; margin-bottom: 1mm; font-size: 9pt; }
 .invoice-party p { margin: 0; white-space: pre-line; font-size: 8pt; }
-.invoice-items-wrap { min-height: 133mm; margin-top: 2mm; }
-.invoice-items { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.invoice-items-wrap, .invoice-tax-wrap { max-width: 100%; overflow-x: auto; }
+.invoice-items-wrap { margin-top: 2mm; }
+.invoice-items { width: 100%; min-width: 680px; border-collapse: collapse; table-layout: fixed; }
 .invoice-items th, .invoice-items td { padding: 2mm 1.5mm; border: 1px solid #222; font-size: 8pt; vertical-align: top; overflow-wrap: anywhere; }
 .invoice-items thead th { background: #e4e4e4; text-align: center; font-weight: 700; }
 .invoice-items th:nth-child(1) { width: 5%; }
@@ -293,7 +294,15 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
   .history-toolbar { align-items: stretch; flex-direction: column; }
   .search-field, .filter-field { width: 100%; }
   .excel-download-button { width: 100%; }
+  .bill-workspace { padding: 16px 12px 28px; }
+  .bill-toolbar { flex-wrap: wrap; }
   .invoice-paper { width: 100%; min-height: auto; padding: 20px; }
+  .invoice-header { grid-template-columns: 1fr; }
+  .invoice-meta { border-top: 1px solid #222; border-left: 0; }
+  .invoice-parties { grid-template-columns: 1fr; gap: 2mm; }
+  .invoice-party + .invoice-party { border-left: 1px solid #222; }
+  .invoice-footer { grid-template-columns: 1fr; }
+  .invoice-bank-details { border-right: 0; border-bottom: 1px solid #222; }
 }
 @media (max-width: 430px) {
   .header-inner, .page-shell { width: calc(100% - 24px); }
@@ -306,6 +315,8 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
   .heading-note { max-width: 70px; font-size: 10px; text-align: right; }
   .invoice-grid { grid-template-columns: 1fr; }
   .new-bill-link { min-width: 96px; padding: 0 10px; font-size: 10px; }
+  .bill-toolbar > .button { flex: 1; justify-content: center; }
+  .invoice-paper { padding: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
@@ -316,6 +327,14 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
   .bill-workspace { padding: 0; }
   .bill-toolbar, .bill-loading, .bill-error { display: none !important; }
   .invoice-paper { width: 210mm; min-height: 297mm; margin: 0; padding: 11mm; box-shadow: none; }
+  .invoice-header { grid-template-columns: 1.55fr 1fr; }
+  .invoice-meta { border-top: 0; border-left: 1px solid #222; }
+  .invoice-parties { grid-template-columns: 1fr 1fr; gap: 0; }
+  .invoice-party + .invoice-party { border-left: 0; }
+  .invoice-footer { grid-template-columns: 1.1fr .9fr; }
+  .invoice-bank-details { border-right: 1px solid #222; border-bottom: 0; }
+  .invoice-items { min-width: 0; }
+  .invoice-items-wrap, .invoice-tax-wrap { overflow: visible; }
   .invoice-tax { min-width: 0; }
   .invoice-tax thead { display: table-header-group; }
   .invoice-tax tr, .invoice-footer { break-inside: avoid; page-break-inside: avoid; }

@@ -16,6 +16,16 @@ let dataDirectory;
 let serverProcess;
 let serverUrl;
 
+function renderPdf(document) {
+  const chunks = [];
+  return new Promise((resolve, reject) => {
+    document.on('data', (chunk) => chunks.push(chunk));
+    document.on('end', () => resolve(Buffer.concat(chunks)));
+    document.on('error', reject);
+    document.end();
+  });
+}
+
 test('formats totals as Indian Rupee words with paise', () => {
   assert.equal(amountInWords(59561.84), 'Indian Rupees Fifty Nine Thousand Five Hundred Sixty One and Eighty Four Paise Only');
   assert.equal(amountInWords(100000), 'Indian Rupees One Lakh Only');
@@ -61,16 +71,48 @@ test('PDF paginates long item and HSN summaries without failing', async () => {
     totalAmount: 4720,
     items
   });
-  const chunks = [];
-  const pdfBuffer = await new Promise((resolve, reject) => {
-    document.on('data', (chunk) => chunks.push(chunk));
-    document.on('end', () => resolve(Buffer.concat(chunks)));
-    document.on('error', reject);
-    document.end();
-  });
+  const pdfBuffer = await renderPdf(document);
   const pageCount = (pdfBuffer.toString('latin1').match(/\/Type\s*\/Page\b/g) || []).length;
   assert.ok(pageCount >= 3, `Expected multiple item and tax-summary pages, got ${pageCount}.`);
   assert.equal(pdfBuffer.subarray(0, 5).toString(), '%PDF-');
+});
+
+test('keeps invoice totals with the items when they fit on the same page', async () => {
+  const items = Array.from({ length: 7 }, (_, index) => ({
+    slNo: index + 1,
+    description: `Invoice item ${index + 1}`,
+    hsn: ['34011930', '34054000', '34011110'][index % 3],
+    quantity: 1,
+    unit: 'Pc',
+    rateExclTax: 100,
+    rateInclTax: 118,
+    amount: 100,
+    isDiscount: index === 3
+  }));
+  const document = await createInvoicePdf({
+    billId: 'CGS-0021',
+    invoiceDate: '2026-10-04',
+    vehicleNo: 'KA02AF7135',
+    shipToName: 'Pagination Test',
+    shipToAddress: 'Test address',
+    totalAmount: 790,
+    discountAmount: 100,
+    roundOffAmount: 0,
+    items
+  });
+  const pageTexts = [];
+  await pdfParse(await renderPdf(document), {
+    pagerender: (page) => page.getTextContent().then((content) => {
+      const text = content.items.map((item) => item.str).join(' ');
+      pageTexts.push(text);
+      return text;
+    })
+  });
+  const firstPage = pageTexts[0];
+
+  assert.match(firstPage, /Invoice item 7/);
+  assert.match(firstPage, /AMOUNT IN WORDS/);
+  assert.match(firstPage, /Indian Rupees/);
 });
 
 function waitForServer(child) {
