@@ -4,7 +4,7 @@ A small billing app with a vanilla HTML, CSS, and JavaScript frontend. Bills and
 
 ## Start the application on Windows
 
-Double-click the **CGS Bill Book** shortcut on the Windows desktop to start the app and open it in your browser. The shortcut uses `start-app.bat` in the application folder. On launch, the script checks both the bill book and PDF extractor dependencies and installs or repairs any missing packages automatically. This also works after cloning the repository, provided Node.js and npm are installed. If the app is already running, the shortcut reuses it rather than starting another server. Keep the server window open while using the app. To stop the app, press **Ctrl+C** in that window.
+Double-click the **CGS Bill Book** shortcut on the Windows desktop to start the app and open it in your browser. The shortcut uses `start-app.bat` in the application folder. On launch, the script checks both the bill book and PDF extractor dependencies and installs or repairs any missing packages automatically. This also works after cloning the repository, provided Node.js and npm are installed. If the current backend is already running, the shortcut reuses it rather than starting another server. If an older server is using port 3000, close its server window and run the shortcut again to load the updated vendor balances and payment API. Keep the server window open while using the app. To stop the app, press **Ctrl+C** in that window.
 
 If the desktop shortcut is missing, double-click `start-app.bat` in the application folder instead.
 
@@ -20,11 +20,12 @@ Then open [http://localhost:3000](http://localhost:3000). Node.js 18 or newer is
 
 ## Use the application
 
-1. On the New Bill page, enter the seller, ship-to, invoice date, vehicle, and payment details.
+1. On the New Bill page, review the total, paid, and unpaid amount summary, then enter the seller, ship-to, invoice date, vehicle, and payment details.
 2. To import a vendor invoice, choose a text-based PDF and select **Extract bill details**. Review the populated fields and line items; correct anything the PDF reader missed. Scanned/image-only PDFs are not supported without OCR.
 3. Add or edit line items. Enter **Percentage of increase** to increase each item's excluding-GST rate, including-GST rate, and amount by that percentage. For example, a 10% increase changes a rate of ₹100.00 to ₹110.00. Line amounts use the excluding-GST rate; the bill total adds GST to the taxable amount after deducting any scheme/free item rows marked as **Discount**, then rounds the payable total up to the next whole rupee.
 4. Review the calculated total and select **Save Bill**. Saved bills are recorded in `data/bills.xlsx` and `data/bills.json`.
-5. Open Bill History to find saved bills, update payment status, view an invoice, or download its PDF.
+5. Open **Explore Bills** to filter vendors by Ship To name, see their total/paid/unpaid balances, and record a received payment with its date. Payments are tracked against the vendor's combined balance, not assigned to individual bills; the remaining balance updates immediately and overpayments are rejected.
+6. Open **History** to find saved bills, update legacy full-bill payment status, view an invoice, or download its PDF.
 
 Keep the server window open while working, and close `data/bills.xlsx` in Excel before saving bills or changing payment status.
 
@@ -53,4 +54,4 @@ Create these from **New Bill** to check both payment states and the history filt
 
 ## Workbook layout
 
-The workbook contains a `Bills` sheet with one row per invoice and an `Items` sheet with one row per line item. Bill IDs are assigned sequentially in the format `CGS-0001`. Payment status is a manual `Paid` or `Unpaid` value; new bills default to `Unpaid`. Submitted bills are also appended to `data/bills.json`; each JSON record includes its percentage increase, discount amount, and adjusted item rates and amounts. The percentage is applied once to each entered rate and line amount; the invoice total is the taxable amount after discounts plus the calculated GST.
+The workbook contains a consolidated `Bills` sheet, one `Bills YYYY-MM` sheet per invoice month, an `Items` sheet, and a `Payments` sheet. The Seller Name field is intentionally omitted from Excel; bill JSON retains the seller details for invoice generation. Bill IDs are assigned sequentially in the format `CGS-0001`. Submitted bills and their line items are saved in `data/bills.json`; dated vendor-level payment transactions are saved in `data/payments.json`. Existing bills marked `Paid` continue to count as paid, and new bills default to `Unpaid`. The percentage is applied once to each entered rate and line amount; the invoice total is the taxable amount after discounts plus the calculated GST.

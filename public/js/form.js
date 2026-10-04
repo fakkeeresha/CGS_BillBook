@@ -29,6 +29,23 @@ function formatIndianAmount(value) {
   const amount = Number.isFinite(Number(value)) ? Number(value) : 0;
   return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
 }
+async function loadPaymentSummary() {
+  const error = document.querySelector('#dashboard-error');
+  try {
+    const response = await fetch('/api/explore');
+    if (!response.headers.get('content-type')?.includes('application/json')) {
+      throw new Error('The bill book server is running an older version. Close its server window and start the app again to load payment totals.');
+    }
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Unable to load payment summary.');
+    document.querySelector('#dashboard-total').textContent = `₹${formatIndianAmount(result.summary.totalAmount)}`;
+    document.querySelector('#dashboard-paid').textContent = `₹${formatIndianAmount(result.summary.paidAmount)}`;
+    document.querySelector('#dashboard-unpaid').textContent = `₹${formatIndianAmount(result.summary.unpaidAmount)}`;
+  } catch (loadError) {
+    error.textContent = loadError.message || 'Unable to load payment summary.';
+    error.hidden = false;
+  }
+}
 
 const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
 const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
@@ -421,6 +438,7 @@ form.addEventListener('submit', async (event) => {
     if (!response.ok) throw new Error(result.error || 'Unable to save bill.');
     showToast(`Bill ${result.billId} saved successfully.`);
     resetBillForm();
+    loadPaymentSummary();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (error) {
     showToast(error.message || 'Unable to save bill.', true);
@@ -459,3 +477,4 @@ document.querySelector('#invoice-date').value = today();
 syncSellerToConsignee();
 createItemRow();
 updateTotalDisplay();
+loadPaymentSummary();

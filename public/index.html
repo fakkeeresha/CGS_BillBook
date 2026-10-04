@@ -20,6 +20,7 @@
       </a>
       <nav class="main-nav" aria-label="Main navigation">
         <a class="nav-link is-active" href="/" aria-current="page">New Bill</a>
+        <a class="nav-link" href="/explore.html">Explore Bills</a>
         <a class="nav-link" href="/history.html">History</a>
       </nav>
     </div>
@@ -30,6 +31,13 @@
       <div><p class="eyebrow">BILLING</p><h1>Create a new bill</h1><p class="page-subtitle">Enter the invoice details and line items below.</p></div>
       <span class="heading-note"><span class="required-star">*</span> Required fields</span>
     </div>
+
+    <section class="summary-strip dashboard-summary" aria-label="Payment summary">
+      <div class="summary-item"><span class="summary-label">Total amount</span><strong id="dashboard-total">₹0.00</strong></div>
+      <div class="summary-item"><span class="summary-label">Paid amount</span><strong id="dashboard-paid" class="summary-paid">₹0.00</strong></div>
+      <div class="summary-item"><span class="summary-label">Total unpaid amount</span><strong id="dashboard-unpaid" class="summary-unpaid">₹0.00</strong></div>
+    </section>
+    <p class="load-error dashboard-error" id="dashboard-error" role="alert" hidden></p>
 
     <form id="bill-form" novalidate>
       <section class="panel vendor-import-panel" aria-labelledby="vendor-import-heading">

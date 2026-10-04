@@ -242,6 +242,44 @@ test('appends percentage-adjusted bills to JSON and Excel and syncs payment stat
   assert.equal(ledger[0].paymentStatus, 'Paid');
   assert.ok(ledger[0].paidOn);
 
+  const malformedWorkbook = new ExcelJS.Workbook();
+  await malformedWorkbook.xlsx.readFile(path.join(dataDirectory, 'bills.xlsx'));
+  malformedWorkbook.getWorksheet('Bills').getRow(1).getCell(4).value = 'Seller Name';
+  malformedWorkbook.getWorksheet('Bills').getRow(2).getCell(4).value = 'Misaligned value';
+  await malformedWorkbook.xlsx.writeFile(path.join(dataDirectory, 'bills.xlsx'));
+
+  const paymentResponse = await fetch(`${serverUrl}/api/payments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ vendorName: 'Test Customer Two', date: '2026-10-04', amount: 20 })
+  });
+  assert.equal(paymentResponse.status, 201);
+  const payment = await paymentResponse.json();
+  assert.equal(payment.vendorName, 'Test Customer Two');
+  assert.equal(payment.amount, 20);
+  assert.equal(payment.remainingBalance, 30);
+
+  const overpaymentResponse = await fetch(`${serverUrl}/api/payments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ vendorName: 'Test Customer Two', date: '2026-10-04', amount: 30.01 })
+  });
+  assert.equal(overpaymentResponse.status, 400);
+  const invalidPaymentResponse = await fetch(`${serverUrl}/api/payments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ vendorName: 'Test Customer Two', date: '2026-02-31', amount: 0.001 })
+  });
+  assert.equal(invalidPaymentResponse.status, 400);
+
+  const exploreResponse = await fetch(`${serverUrl}/api/explore`);
+  const explore = await exploreResponse.json();
+  assert.deepEqual(explore.summary, { totalAmount: 413, paidAmount: 383, unpaidAmount: 30, vendorCount: 2 });
+  assert.equal(explore.vendors.find((vendor) => vendor.vendorName === 'Test Customer Two').payments.length, 1);
+  const paymentLedger = JSON.parse(await fs.readFile(path.join(dataDirectory, 'payments.json'), 'utf8'));
+  assert.equal(paymentLedger.length, 1);
+  assert.equal(paymentLedger[0].remainingBalance, 30);
+
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(path.join(dataDirectory, 'bills.xlsx'));
   const billsSheet = workbook.getWorksheet('Bills');
@@ -253,7 +291,16 @@ test('appends percentage-adjusted bills to JSON and Excel and syncs payment stat
   assert.equal(itemsSheet.getRow(2).getCell(9).value, 110);
   assert.equal(itemsSheet.getRow(3).getCell(9).value, 220);
   assert.equal(itemsSheet.getRow(4).getCell(9).value, 50);
-  assert.equal(billsSheet.getRow(2).getCell(10).value, 'Paid');
+  assert.equal(billsSheet.getRow(2).getCell(9).value, 'Paid');
+  assert.equal(billsSheet.getRow(2).getCell(4).value, '17 Residency Road, Bengaluru');
+  assert.equal(billsSheet.getRow(2).getCell(5).value, 'Test Customer One');
+  assert.equal(billsSheet.getRow(2).getCell(6).value, '42 Test Road, Bengaluru');
+  assert.equal(billsSheet.getRow(2).getCell(7).value, 'KA02AF7135');
+  assert.equal(billsSheet.getRow(2).getCell(8).value, 363);
+  assert.equal(billsSheet.getRow(1).values.includes('Seller Name'), false);
+  assert.equal(workbook.getWorksheet('Payments').getRow(2).getCell(4).value, 20);
+  assert.deepEqual(workbook.getWorksheet('Bills 2026-10').getRow(1).values.slice(1), billsSheet.getRow(1).values.slice(1));
+  assert.equal(workbook.getWorksheet('Bills 2026-10').rowCount, 3);
 
   const exportResponse = await fetch(`${serverUrl}/api/bills/export`);
   assert.equal(exportResponse.status, 200);
@@ -261,7 +308,10 @@ test('appends percentage-adjusted bills to JSON and Excel and syncs payment stat
   assert.match(exportResponse.headers.get('content-disposition'), /attachment;\s*filename="bills\.xlsx"/);
   const exportedWorkbook = new ExcelJS.Workbook();
   await exportedWorkbook.xlsx.load(Buffer.from(await exportResponse.arrayBuffer()));
-  assert.deepEqual(exportedWorkbook.worksheets.map((sheet) => sheet.name), ['Bills', 'Items', 'Metadata']);
+  for (const sheetName of ['Bills', 'Items', 'Metadata', 'Payments', 'Bills 2026-10']) {
+    assert.ok(exportedWorkbook.getWorksheet(sheetName), `Expected ${sheetName} in Excel export`);
+  }
+  assert.deepEqual(exportedWorkbook.worksheets.map((sheet) => sheet.name), ['Bills', 'Items', 'Payments', 'Bills 2026-10', 'Metadata']);
   assert.equal(exportedWorkbook.getWorksheet('Bills').getRow(2).getCell(1).value, 'CGS-0001');
   assert.equal(exportedWorkbook.getWorksheet('Items').getRow(2).getCell(1).value, 'CGS-0001');
 });
@@ -325,9 +375,9 @@ test('deducts scheme/free item values from bill totals and records the discount 
   itemsSheet.eachRow((row, rowNumber) => {
     if (rowNumber > 1 && row.getCell(1).value === result.billId && row.getCell(2).value === 2) discountRow = row;
   });
-  assert.equal(billsRow.getCell(12).value, 55);
-  assert.equal(billsRow.getCell(13).value, 0.4);
-  assert.equal(billsRow.getCell(9).value, 260);
+  assert.equal(billsRow.getCell(11).value, 55);
+  assert.equal(billsRow.getCell(12).value, 0.4);
+  assert.equal(billsRow.getCell(8).value, 260);
   assert.equal(discountRow.getCell(10).value, 'Yes');
 });
 
@@ -351,7 +401,7 @@ test('deletes a bill from JSON, Excel, and history', async () => {
 
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(path.join(dataDirectory, 'bills.xlsx'));
-  for (const sheetName of ['Bills', 'Items']) {
+  for (const sheetName of ['Bills', 'Items', 'Bills 2026-10']) {
     let matchingRows = 0;
     workbook.getWorksheet(sheetName).eachRow((row, rowNumber) => {
       if (rowNumber > 1 && row.getCell(1).value === bill.billId) matchingRows += 1;

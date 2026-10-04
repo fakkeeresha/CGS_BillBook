@@ -149,6 +149,8 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
 .history-shell { padding-top: 38px; }
 .new-bill-link { min-width: 112px; }
 .summary-strip { display: grid; grid-template-columns: 1fr 1fr 1fr 1.5fr; margin-bottom: 17px; overflow: hidden; background: #fff; border: 1px solid #e1e9e5; border-radius: 8px; box-shadow: var(--shadow); }
+.dashboard-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dashboard-error { margin: -7px 0 16px; padding: 0 4px; }
 .summary-item { min-width: 0; display: grid; gap: 8px; padding: 18px 21px; border-right: 1px solid #e9efeb; }
 .summary-item:last-child { border-right: 0; }
 .summary-label { color: var(--muted); font-size: 10px; font-weight: 600; }
@@ -194,6 +196,27 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
 .empty-state h2 { margin-bottom: 7px; color: #29464a; font-size: 17px; }
 .empty-state p { margin-bottom: 18px; color: var(--muted); font-size: 12px; }
 .load-error { margin: 0; padding: 22px; color: var(--red); font-size: 12px; }
+.explore-panel { margin-bottom: 17px; padding: 0; overflow: hidden; }
+.explore-panel > .panel-heading { margin: 0; padding: 22px 24px 16px; }
+.explore-toolbar { padding: 0 24px 17px; }
+.explore-toolbar .search-field { width: min(420px, 100%); }
+.vendor-count, .selected-vendor { color: var(--muted); font-size: 11px; }
+.payment-form { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.45fr auto; align-items: end; gap: 14px; padding: 0 24px; }
+.payment-form .field-group { gap: 7px; }
+.payment-form input, .payment-form select { min-height: 42px; }
+.balance-field strong { min-height: 42px; display: flex; align-items: center; color: var(--green); font-size: 15px; font-variant-numeric: tabular-nums; }
+.balance-field strong.is-error { color: var(--red); font-size: 11px; }
+.payment-submit { min-height: 42px; white-space: nowrap; }
+.payment-hint { margin: 14px 24px 20px; line-height: 1.5; }
+.vendor-table { min-width: 850px; }
+.payment-history-table { min-width: 640px; }
+.choose-vendor-button { min-height: 32px; padding: 0 10px; color: var(--teal-dark); background: #fff; border: 1px solid #a9c9c0; border-radius: 5px; font-size: 10px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.choose-vendor-button:hover, .choose-vendor-button:focus-visible { color: #fff; background: var(--teal); border-color: var(--teal); }
+.choose-vendor-button:disabled { color: var(--muted); background: #f4f7f5; border-color: var(--line); cursor: not-allowed; }
+.payment-submit:disabled { cursor: not-allowed; opacity: .6; }
+.payment-empty { padding: 18px 20px; }
+.payment-empty p { margin: 0; }
+.explore-panel .load-error { padding: 10px 24px 18px; }
 
 /* Printable invoice */
 .bill-page { min-width: 320px; background: #edf0ed; color: #151515; font-family: Arial, 'Segoe UI', sans-serif; }
@@ -286,6 +309,7 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
   .form-actions { justify-content: space-between; }
   .form-actions .button-primary { flex: 1; }
   .summary-strip { grid-template-columns: 1fr 1fr; }
+  .dashboard-summary { grid-template-columns: 1fr 1fr; }
   .summary-item { padding: 14px 16px; border-bottom: 1px solid #e9efeb; }
   .summary-item:nth-child(2) { border-right: 0; }
   .summary-item:nth-child(3), .summary-item:nth-child(4) { border-bottom: 0; }
@@ -294,6 +318,12 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
   .history-toolbar { align-items: stretch; flex-direction: column; }
   .search-field, .filter-field { width: 100%; }
   .excel-download-button { width: 100%; }
+  .payment-form { grid-template-columns: 1fr 1fr; padding: 0 19px; }
+  .payment-form .field-group:first-child, .payment-hint { grid-column: 1 / -1; }
+  .payment-submit { width: 100%; }
+  .explore-panel > .panel-heading { padding: 19px 19px 14px; }
+  .explore-toolbar { padding: 0 19px 15px; }
+  .payment-hint { margin-right: 19px; margin-left: 19px; }
   .bill-workspace { padding: 16px 12px 28px; }
   .bill-toolbar { flex-wrap: wrap; }
   .invoice-paper { width: 100%; min-height: auto; padding: 20px; }
